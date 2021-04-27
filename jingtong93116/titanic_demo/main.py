@@ -1,16 +1,33 @@
-# This is a sample Python script.
+import pandas as pd
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+train_data = pd.read_csv('data/train.csv')
+print(train_data.head())
+
+test_data=pd.read_csv('data/test.csv')
+print(test_data.head())
+
+women = train_data.loc[train_data.Sex == 'female']["Survived"]
+rate_women = sum(women)/len(women)
+print("% of women who survived:", rate_women)
+
+men = train_data.loc[train_data.Sex == 'male']["Survived"]
+rate_men = sum(men)/len(men)
+print("% of men who survived:", rate_men)
+
+from sklearn.ensemble import RandomForestClassifier
+y = train_data["Survived"]
+features = ["Pclass", "Sex", "SibSp", "Parch"]
+X = pd.get_dummies(train_data[features])
+X_test = pd.get_dummies(test_data[features])
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(X, y)
+predictions = model.predict(X_test)
+
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+output.to_csv('my_submission.csv', index=False)
+print("Your submission was successfully saved!")
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
